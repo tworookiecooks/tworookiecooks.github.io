@@ -1,0 +1,52 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #fff8f0;
+  --foreground: #171717;
+  --text: #523d26;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  color: var(--text);
+  background: var(--background);
+  font-family: 'Source Code Pro', monospace;
+  min-height: 100vh;
+}
+
+h2 {
+  @apply text-4xl mt-12 mb-4 leading-snug;
+}
+
+h3 {
+  @apply text-2xl mb-4 leading-snug;
+}
+
+h4 {
+  @apply text-xl mb-4 leading-snug;
+}
+
+ul {
+  list-style-type: disc;
+  list-style-position: outside;
+}
+
+ol {
+  list-style-type: decimal;
+  list-style-position: outside;
+}
+
+ol li {
+  @apply ml-4
+}
+
+ul li {
+  @apply ml-4
+}
+
