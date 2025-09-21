@@ -7,6 +7,7 @@ export interface Recipe {
     ingredientLists: IngredientList[];
     method: string[];
     iframeUrl: string;
+    tags?: string[];
 }
 
 export interface IngredientList {

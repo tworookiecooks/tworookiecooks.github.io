@@ -17,7 +17,7 @@ function Explore({ recipes }: Props) {
   var sortByDate = [...recipes];
   sortByDate.sort((a, b) => {
     if (a.publishedDate != null) {
-      return a.publishedDate._seconds > b.publishedDate._seconds ? -1 : 1;
+      return a.publishedDate?._seconds > b.publishedDate?._seconds ? -1 : 1;
     }
     return 1;
   });
@@ -31,11 +31,11 @@ function Explore({ recipes }: Props) {
         <RecipeSubheading>New Recipes</RecipeSubheading>
         <RecipeCarousel recipes={sortByDate} />
 
-        <RecipeSubheading>Crowd Favourites</RecipeSubheading>
+        <RecipeSubheading>All Recipes</RecipeSubheading>
         <RecipeCarousel recipes={recipes} />
 
-        <RecipeSubheading>Quick Recipes</RecipeSubheading>
-        <RecipeCarousel recipes={recipes} />
+        {/* <RecipeSubheading>Quick Recipes</RecipeSubheading>
+        <RecipeCarousel recipes={recipes} /> */}
       </Container>
       <Footer />
     </>

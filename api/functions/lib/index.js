@@ -73,7 +73,6 @@ exports.postRecipeFromYaml = (0, https_1.onRequest)(async (request, response) =>
     let title = recipe.title.toLowerCase();
     title = title.replaceAll(" ", "-");
     const recipeRef = db.collection("recipes").doc(title);
-    console.log(recipe);
     await recipeRef.set(recipe, { merge: true });
     response.status(200).json(filteredData);
 });

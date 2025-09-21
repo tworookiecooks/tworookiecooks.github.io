@@ -4,7 +4,9 @@ import RecipeIngredients from "@/components/RecipeIngredients";
 import RecipeMethod from "@/components/RecipeMethod";
 import RecipeTitle from "@/components/RecipeTitle";
 import RecipeVideo from "@/components/RecipeVideo";
+import Tag from "@/components/Tag";
 import { Recipe } from "@/models/Recipe";
+import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import axios from "axios";
 import ErrorPage from "next/error";
 import { useRouter } from "next/router";
@@ -29,11 +31,15 @@ export default function RecipeDisplay({ recipeId, recipes }: Props) {
   }
 
   // State to track which subrecipe is expanded
-  const [expandedSubrecipeId, setExpandedSubrecipeId] = useState<string | null>(null);
+  const [expandedSubrecipeId, setExpandedSubrecipeId] = useState<string | null>(
+    null
+  );
 
   // Callback to expand/collapse a specific subrecipe
   const handleExpandSubrecipeClick = (subrecipeId: string) => {
-    setExpandedSubrecipeId((prev) => (prev === subrecipeId ? null : subrecipeId));
+    setExpandedSubrecipeId((prev) =>
+      prev === subrecipeId ? null : subrecipeId
+    );
   };
 
   function getSubrecipesForIngredient(
@@ -87,50 +93,63 @@ export default function RecipeDisplay({ recipeId, recipes }: Props) {
       <Container recipes={recipes}>
         <div className="p-10">
           <RecipeTitle>{recipe.title}</RecipeTitle>
-          {recipe.iframeUrl && (
-            <div className="flex-none pb-8 md:pl-8 md:float-right">
-              <RecipeVideo title={title} url={recipe.iframeUrl} />
+          {/* Example Tag component above the recipe description */}
+          {/* <div className="mb-4">
+            <Tag>
+              <AccessTimeIcon />
+              30 mins
+            </Tag>
+          </div> */}
+          <div className="flex flex-col-reverse md:flex-row">
+            <div>
+              {recipe.description.map((description, index) => {
+                if (description.type === "p") {
+                  // Apply white-space: pre-wrap; to this <p> tag if content can have internal newlines
+                  const Tag = description.type;
+
+                  return (
+                    <Tag
+                      key={index}
+                      className="recipe-paragraph"
+                      style={{ whiteSpace: "pre-wrap" }}
+                    >
+                      {description.content}
+                    </Tag>
+                  );
+                } else if (description.type === "h3") {
+                  const HeadingTag = description.type; // Default to h3 if level not specified
+                  return (
+                    <HeadingTag key={index}>{description.content}</HeadingTag>
+                  );
+                } else if (description.type === "list") {
+                  return (
+                    <ul key={index}>
+                      {description.items.map((item, itemIndex) => (
+                        <li key={itemIndex}>{item}</li>
+                      ))}
+                    </ul>
+                  );
+                }
+                return null;
+              })}
+
+              <br />
+              <RecipeIngredients
+                ingredientLists={recipe.ingredientLists}
+                onExpandSubrecipeClick={handleExpandSubrecipeClick}
+                expandedSubrecipeId={expandedSubrecipeId}
+                recipes={recipes}
+              />
+              <br />
+              <RecipeMethod method={getMethod()} />
             </div>
-          )}
 
-          {recipe.description.map((description, index) => {
-            if (description.type === "p") {
-              // Apply white-space: pre-wrap; to this <p> tag if content can have internal newlines
-              const Tag = description.type;
-
-              return (
-                <Tag
-                  key={index}
-                  className="recipe-paragraph"
-                  style={{ whiteSpace: "pre-wrap" }}
-                >
-                  {description.content}
-                </Tag>
-              );
-            } else if (description.type === "h3") {
-              const HeadingTag = description.type; // Default to h3 if level not specified
-              return <HeadingTag key={index}>{description.content}</HeadingTag>;
-            } else if (description.type === "list") {
-              return (
-                <ul key={index}>
-                  {description.items.map((item, itemIndex) => (
-                    <li key={itemIndex}>{item}</li>
-                  ))}
-                </ul>
-              );
-            }
-            return null;
-          })}
-
-          <br />
-          <RecipeIngredients
-            ingredientLists={recipe.ingredientLists}
-            onExpandSubrecipeClick={handleExpandSubrecipeClick}
-            expandedSubrecipeId={expandedSubrecipeId}
-            recipes={recipes}
-          />
-          <br />
-          <RecipeMethod method={getMethod()} />
+            {recipe.iframeUrl && (
+              <div className="flex-none pb-8 md:pl-8">
+                <RecipeVideo title={title} url={recipe.iframeUrl} />
+              </div>
+            )}
+          </div>
         </div>
       </Container>
       <Footer />
