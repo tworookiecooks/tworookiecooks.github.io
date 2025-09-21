@@ -1,7 +1,7 @@
 export interface Recipe {
     id: string;
     title: string;
-    publishedDate: Date; 
+    publishedDate: PublishedDate; 
     shortDescription: string; 
     description: Description[];
     ingredientLists: IngredientList[];
@@ -31,4 +31,8 @@ export interface Description {
     type: string; 
     content: string; 
     items: string[];
+}
+
+export interface PublishedDate {
+    _seconds: number;
 }

@@ -22,7 +22,6 @@ function Explore({ recipes }: Props) {
     return 1;
   });
   sortByDate = sortByDate.slice(0, 10);
-  console.log(recipes);
 
   return (
     <>

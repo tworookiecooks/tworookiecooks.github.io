@@ -18,11 +18,12 @@ export default function Search({ allRecipes, className, onClick }: Props) {
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const [isOpen, setIsOpen] = useState(false);
-  let searchBarRef = useRef<HTMLDivElement>();
+  const searchBarRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const handler = (e) => {
-      if (!searchBarRef.current.contains(e.target)) {
+    const handler = (e: MouseEvent) => {
+      const target = e.target as Node | null;
+      if (!searchBarRef.current?.contains(target)) {
         setIsOpen(false);
       } else {
         setIsOpen(true);
@@ -48,7 +49,7 @@ export default function Search({ allRecipes, className, onClick }: Props) {
     };
   }, [searchTerm]);
 
-  const handleChange = (e) => {
+  const handleChange = (e: { target: { value: React.SetStateAction<string>; }; }) => {
     setDebouncedSearchTerm(e.target.value);
   };
 
