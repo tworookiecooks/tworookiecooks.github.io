@@ -76,7 +76,7 @@ jobs:
       - name: Build with Next.js
         env:
           NEXT_PUBLIC_GTAG: ${{ secrets.GTAG }}
-        run: cd ui && NEXT_DISABLE_ESLINT=true ${{ steps.detect-package-manager.outputs.runner }} next build
+        run: cd ui && ${{ steps.detect-package-manager.outputs.runner }} next build --no-lint
       - name: Static HTML export with Next.js
         run: cd ui && ${{ steps.detect-package-manager.outputs.runner }} next export
       - name: Upload artifact
