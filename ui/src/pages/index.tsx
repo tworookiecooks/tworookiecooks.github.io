@@ -7,6 +7,7 @@ import RecipeRoundedTile from "@/components/RecipeRoundedTile";
 import Container from "@/components/Container";
 import Footer from "@/components/Footer";
 import TextButton from "@/components/TextButton";
+import { useRecipes } from "@/context/RecipesContext";
 
 export const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -21,15 +22,14 @@ export const geistMono = localFont({
 
 type Props = {
   topRecipes: Recipe[];
-  recipes: Recipe[];
 };
 
-export default function Home({ topRecipes, recipes }: Props) {
+export default function Home({ topRecipes }: Props) {
+  const { recipes } = useRecipes();
   return (
     <>
       <Container recipes={recipes}>
-
-      <RecipeTitle>Two Rookie Cooks</RecipeTitle>
+        <RecipeTitle>Two Rookie Cooks</RecipeTitle>
 
         <div className="flex justify-center ">
           <div className="relative">
@@ -59,9 +59,9 @@ export default function Home({ topRecipes, recipes }: Props) {
                 />
               </div>
             </div>
-          <div className="ml-auto w-fit py-4">
-            <TextButton href="/explore">Explore more →</TextButton>
-          </div>
+            <div className="ml-auto w-fit py-4">
+              <TextButton href="/explore">Explore more →</TextButton>
+            </div>
           </div>
         </div>
       </Container>
@@ -82,7 +82,9 @@ function getRandomUniqueItemsIterative<T>(list: T[], count: number): T[] {
   if (count > mutableList.length) {
     // If you need more items than available, return all of them
     // or throw an error depending on your requirements.
-    console.warn(`Attempted to get ${count} items, but only ${mutableList.length} available. Returning all available items.`);
+    console.warn(
+      `Attempted to get ${count} items, but only ${mutableList.length} available. Returning all available items.`
+    );
     return mutableList; // Or throw new Error("Not enough items in the list.");
   }
 
@@ -92,7 +94,7 @@ function getRandomUniqueItemsIterative<T>(list: T[], count: number): T[] {
     // Add the randomly selected item to the result
     result.push(mutableList[randomIndex]);
     // Remove the selected item from the mutable list to prevent re-selection
-    mutableList.splice(randomIndex, 1); 
+    mutableList.splice(randomIndex, 1);
   }
 
   return result;
@@ -110,5 +112,6 @@ export const getStaticProps = async () => {
       topRecipes: topRecipes,
       recipes: recipeResponse.data,
     },
+    // revalidate removed for static export compatibility
   };
-}
+};

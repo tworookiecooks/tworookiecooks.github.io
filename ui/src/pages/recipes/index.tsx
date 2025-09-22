@@ -2,15 +2,11 @@ import Footer from "@/components/Footer";
 import NavBar from "@/components/Navbar";
 import RecipeTile from "@/components/RecipeTile";
 import RecipeTitle from "@/components/RecipeTitle";
-import { Recipe } from "@/models/Recipe";
-import axios from "axios";
+import { useRecipes } from "@/context/RecipesContext";
 import React from "react";
 
-type Props = {
-  recipes: Recipe[];
-};
-
-function RecipeCatalogue({ recipes }: Props) {
+function RecipeCatalogue() {
+  const { recipes } = useRecipes();
   return (
     <>
       <NavBar recipes={recipes} />
@@ -30,15 +26,3 @@ function RecipeCatalogue({ recipes }: Props) {
 }
 
 export default RecipeCatalogue;
-
-export const getStaticProps = async () => {
-  const recipes = await axios.get(
-    `http://us-central1-two-rookie-cooks.cloudfunctions.net/getRecipes`
-  );
-
-  return {
-    props: {
-      recipes: recipes.data
-    },
-  };
-};

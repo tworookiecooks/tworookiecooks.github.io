@@ -11,29 +11,26 @@ import axios from "axios";
 import ErrorPage from "next/error";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+import { useRecipes } from "@/context/RecipesContext";
 
-type Props = {
-  recipeId: string;
-  recipes: Recipe[];
-};
-
-export default function RecipeDisplay({ recipeId, recipes }: Props) {
-  const recipe = recipes.find((recipe) => recipe.id === recipeId) as Recipe;
-  const title = recipe.title;
-  useEffect(() => {
-    document.title = title;
-  }, [title]);
-
+export default function RecipeDisplay() {
+  const { recipes } = useRecipes();
   const router = useRouter();
-
-  if (!router.isFallback && !recipe?.title) {
-    return <ErrorPage statusCode={404} />;
-  }
-
+  const recipeId = router.query.slug as string;
+  const recipe = recipes.find((recipe) => recipe.id === recipeId) as Recipe;
+  const title = recipe?.title || "";
   // State to track which subrecipe is expanded
   const [expandedSubrecipeId, setExpandedSubrecipeId] = useState<string | null>(
     null
   );
+
+  useEffect(() => {
+    if (title) document.title = title;
+  }, [title]);
+
+  if (!router.isFallback && !recipe?.title) {
+    return <ErrorPage statusCode={404} />;
+  }
 
   // Callback to expand/collapse a specific subrecipe
   const handleExpandSubrecipeClick = (subrecipeId: string) => {
@@ -155,41 +152,4 @@ export default function RecipeDisplay({ recipeId, recipes }: Props) {
       <Footer />
     </>
   );
-}
-
-type Params = {
-  params: {
-    slug: string;
-  };
-};
-
-export async function getStaticProps({ params }: Params) {
-  const recipes = await axios.get(
-    `http://us-central1-two-rookie-cooks.cloudfunctions.net/getRecipes`
-  );
-
-  return {
-    props: {
-      recipeId: params.slug,
-      recipes: recipes.data,
-    },
-  };
-}
-
-export async function getStaticPaths() {
-  const response = await axios.get(
-    `http://us-central1-two-rookie-cooks.cloudfunctions.net/getRecipeIds`
-  );
-  const recipeSlugs: string[] = response.data;
-
-  return {
-    paths: recipeSlugs.map((recipe) => {
-      return {
-        params: {
-          slug: recipe,
-        },
-      };
-    }),
-    fallback: false,
-  };
 }
