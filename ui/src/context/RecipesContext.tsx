@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import { Recipe } from "@/models/Recipe";
+import axios from "axios";
 
 interface RecipesContextType {
   recipes: Recipe[];
@@ -18,6 +19,14 @@ export const RecipesProvider = ({ children, initialRecipes }: { children: ReactN
       setRecipes(JSON.parse(cached));
     } else if (initialRecipes && initialRecipes.length > 0) {
       localStorage.setItem("recipes-cache", JSON.stringify(initialRecipes));
+      setRecipes(initialRecipes);
+    } else {
+      // Fallback: fetch from API if cache and initialRecipes are empty
+      axios.get("http://us-central1-two-rookie-cooks.cloudfunctions.net/getRecipes")
+        .then((response) => {
+          setRecipes(response.data);
+          localStorage.setItem("recipes-cache", JSON.stringify(response.data));
+        });
     }
   }, [initialRecipes]);
 
