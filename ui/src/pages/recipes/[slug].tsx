@@ -28,6 +28,12 @@ export default function RecipeDisplay() {
     if (title) document.title = title;
   }, [title]);
 
+  // Show loading if recipes are not loaded yet
+  if (!recipes || recipes.length === 0) {
+    return <div className="p-10">Loading...</div>;
+  }
+
+  // Only show 404 if recipes are loaded and recipe is not found
   if (!router.isFallback && !recipe?.title) {
     return <ErrorPage statusCode={404} />;
   }
