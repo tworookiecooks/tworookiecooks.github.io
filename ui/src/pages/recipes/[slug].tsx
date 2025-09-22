@@ -13,10 +13,8 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { useRecipes } from "@/context/RecipesContext";
 
-export default function RecipeDisplay() {
-  const { recipes } = useRecipes();
+export default function RecipeDisplay({ recipes, recipeId }: { recipes: Recipe[]; recipeId: string }) {
   const router = useRouter();
-  const recipeId = router.query.slug as string;
   const recipe = recipes.find((recipe) => recipe.id === recipeId) as Recipe;
   const title = recipe?.title || "";
   // State to track which subrecipe is expanded
@@ -28,12 +26,7 @@ export default function RecipeDisplay() {
     if (title) document.title = title;
   }, [title]);
 
-  // Show loading if recipes are not loaded yet
-  if (!recipes || recipes.length === 0) {
-    return <div className="p-10">Loading...</div>;
-  }
-
-  // Only show 404 if recipes are loaded and recipe is not found
+  // Only show 404 if recipe is not found
   if (!router.isFallback && !recipe?.title) {
     return <ErrorPage statusCode={404} />;
   }
@@ -158,4 +151,141 @@ export default function RecipeDisplay() {
       <Footer />
     </>
   );
+}
+
+export async function getStaticPaths() {
+  // List of all recipe slugs from the public/assets/recipe directory
+  const slugs = [
+    "20-minute-laksa",
+    "air-fried-chickpeas",
+    "air-fried-pasta-chips",
+    "air-fried-tteokboki",
+    "air-fried-tteokboki-(sweet)",
+    "army-stew",
+    "asian-inspired-meatballs",
+    "avocado-pasta",
+    "baked-haloumi-meatballs",
+    "banana-bread",
+    "banana-cinnamon-scrolls",
+    "banana-pancakes",
+    "beef-bulgogi",
+    "beef-noodle-soup",
+    "black-pepper-beef",
+    "blueberry-banana-muffin",
+    "bolognese-pies",
+    "breakfast-roti-wrap",
+    "caramelised-onion-dip",
+    "cauliflower-pasta",
+    "char-siu",
+    "cheeseburger-dumplings",
+    "chicken-and-prawn-soup",
+    "chicken-curry",
+    "chorizo-rice",
+    "chrysanthemum-chia-seed-pudding",
+    "creamy-garlic-prawns",
+    "creamy-kimchi-pasta",
+    "creamy-miso-udon",
+    "creamy-tuscan-salmon",
+    "deep-dish-pastry",
+    "diy-pepper-lunch",
+    "dumpling-dough",
+    "egg-drop-soup",
+    "enoki-and-beef-don",
+    "finnish-salmon-soup",
+    "five-spice-chicken-nuggets",
+    "french-onion-soup-pasta",
+    "garlic-butter-prawn-dumplings",
+    "garlic-confit",
+    "garlic-soy-beef-meatballs",
+    "garlic-stracciatella-cheese",
+    "garlicky-bread-bites",
+    "gochujang-bolognese",
+    "gochujang-bolognese-udon",
+    "granola",
+    "half-boiled-eggs",
+    "honey-and-cranberry-cookies",
+    "honey-soy-chicken",
+    "hot-honey-miso-toastie",
+    "jjajangmyeon",
+    "jjolmyeon",
+    "kimchi-dumplings",
+    "kimchi-fried-rice",
+    "kimchi-pancakes",
+    "kimchi-udon",
+    "lamb-&-feta-meatballs",
+    "lasagne-soup",
+    "leek-toastie",
+    "loh-mai-gai",
+    "mango-sticky-rice",
+    "matcha-&-white-chocolate-cookies",
+    "mini-broccoli-quiches",
+    "miso-fish",
+    "miso-fried-prawns",
+    "miso-honey-tofu",
+    "miso-soup-dumplings",
+    "miso-yoghurt-pasta",
+    "mixed-berry-jam",
+    "mochi",
+    "mushroom-pastries",
+    "okonomiyaki",
+    "oreo-cheesecake",
+    "oyakodon",
+    "pan-fried-chicken-thighs",
+    "pan-fried-rice-paper-rolls",
+    "pb&j-rolls",
+    "peanut-butter-granola",
+    "pork-dumplings",
+    "pork-mince-japanese-curry",
+    "ramen-eggs",
+    "rose-tteokboki",
+    "salmon-and-egg-rice",
+    "salmon-bucatini",
+    "salmon-inari",
+    "sausage-bolognese",
+    "scissor-cut-noodles",
+    "seaweed-scrambled-eggs",
+    "shin-ramen-carbonara",
+    "shin-ramen-x-chapagetti",
+    "silken-tofu-pasta-sauce",
+    "soy-sauce-chicken-rice",
+    "spare-rib-soup",
+    "spicy-eggs",
+    "spicy-tofu",
+    "stir-fried-noodles",
+    "sundried-tomato-pesto",
+    "sundried-tomato-pesto-pasta",
+    "sundried-tomato-pesto-toastie",
+    "sushi-bake",
+    "taco-bowl",
+    "taco-pasta",
+    "tahini-noodles",
+    "thai-basil-beef",
+    "tofu-fries",
+    "tomato-scrambled-eggs",
+    "tortillas",
+    "viral-feta-eggs",
+    "vodka-pasta",
+    "zucchini-slice",
+  ];
+
+  return {
+    paths: slugs.map((slug) => ({ params: { slug } })),
+    fallback: false,
+  };
+}
+
+export async function getStaticProps({ params }: { params: { slug: string } }) {
+  // Fetch all recipes at build time
+  const response = await axios.get("http://us-central1-two-rookie-cooks.cloudfunctions.net/getRecipes");
+  const recipes: Recipe[] = response.data;
+  const recipeId = params.slug;
+  // Find the recipe matching the slug
+  // const recipe = recipes.find((r: Recipe) => r.id === recipeId);
+
+  return {
+    props: {
+      recipes,
+      recipeId,
+    },
+  };
 }
