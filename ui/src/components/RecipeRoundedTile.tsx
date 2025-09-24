@@ -8,6 +8,7 @@ type Props = {
 };
 
 const RecipeRoundedTile = ({ recipe, imageClassnames }: Props) => {
+  if (!recipe) return null;
   var title = recipe.title.toLowerCase();
   title = title.replaceAll(" ", "-");
 

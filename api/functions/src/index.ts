@@ -6,7 +6,7 @@ import {Recipe} from "./models/Recipe";
 initializeApp({
   credential: applicationDefault(),
 });
-const db = getFirestore("tworookiecooks");
+const db = getFirestore();
 
 // const {Storage} = require('@google-cloud/storage');
 // const storage = new Storage({
@@ -16,6 +16,13 @@ const db = getFirestore("tworookiecooks");
 // const storage = new Storage();
 
 export const getRecipe = onRequest(async (request, response) => {
+  response.set("Access-Control-Allow-Origin", "*");
+  response.set("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+  response.set("Access-Control-Allow-Headers", "Content-Type");
+  if (request.method === "OPTIONS") {
+    response.status(204).send("");
+    return;
+  }
   const recipeName:string = request.query.recipeName?.toString() ?? "unknown";
 
   const recipeRef = db.collection("recipes").doc(recipeName);
@@ -32,6 +39,13 @@ export const getRecipe = onRequest(async (request, response) => {
 });
 
 export const postRecipeFromYaml = onRequest(async (request, response) => {
+  response.set("Access-Control-Allow-Origin", "*");
+  response.set("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+  response.set("Access-Control-Allow-Headers", "Content-Type");
+  if (request.method === "OPTIONS") {
+    response.status(204).send("");
+    return;
+  }
   const yamlData = request.body;
 
   const jsonData: any = yaml.load(yamlData);
@@ -69,6 +83,13 @@ export const postRecipeFromYaml = onRequest(async (request, response) => {
 });
 
 export const getRecipeIds = onRequest(async (request, response) => {
+  response.set("Access-Control-Allow-Origin", "*");
+  response.set("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+  response.set("Access-Control-Allow-Headers", "Content-Type");
+  if (request.method === "OPTIONS") {
+    response.status(204).send("");
+    return;
+  }
   const recipes = db.collection("recipes").get();
   const titles: string[] = [];
   (await recipes).forEach((doc) => {
@@ -78,6 +99,13 @@ export const getRecipeIds = onRequest(async (request, response) => {
 });
 
 export const getRecipes = onRequest(async (request, response) => {
+  response.set("Access-Control-Allow-Origin", "*");
+  response.set("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+  response.set("Access-Control-Allow-Headers", "Content-Type");
+  if (request.method === "OPTIONS") {
+    response.status(204).send("");
+    return;
+  }
   const recipes = db.collection("recipes").get();
   const docs: Recipe[] = [];
   (await recipes).forEach((doc) => {
@@ -102,6 +130,13 @@ export const getRecipes = onRequest(async (request, response) => {
 });
 
 export const addRecipeTags = onRequest(async (request, response) => {
+  response.set("Access-Control-Allow-Origin", "*");
+  response.set("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+  response.set("Access-Control-Allow-Headers", "Content-Type");
+  if (request.method === "OPTIONS") {
+    response.status(204).send("");
+    return;
+  }
   const pathSegments = request.path.split("/");
 
   const recipeName = pathSegments[1];

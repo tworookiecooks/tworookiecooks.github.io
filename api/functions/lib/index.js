@@ -31,7 +31,7 @@ const yaml = __importStar(require("js-yaml"));
 (0, app_1.initializeApp)({
     credential: (0, app_1.applicationDefault)(),
 });
-const db = (0, firestore_1.getFirestore)("tworookiecooks");
+const db = (0, firestore_1.getFirestore)();
 // const {Storage} = require('@google-cloud/storage');
 // const storage = new Storage({
 //   projectId: "two-rookie-cooks",
@@ -39,6 +39,13 @@ const db = (0, firestore_1.getFirestore)("tworookiecooks");
 // });
 // const storage = new Storage();
 exports.getRecipe = (0, https_1.onRequest)(async (request, response) => {
+    response.set("Access-Control-Allow-Origin", "*");
+    response.set("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+    response.set("Access-Control-Allow-Headers", "Content-Type");
+    if (request.method === "OPTIONS") {
+        response.status(204).send("");
+        return;
+    }
     const recipeName = request.query.recipeName?.toString() ?? "unknown";
     const recipeRef = db.collection("recipes").doc(recipeName);
     const doc = await recipeRef.get();
@@ -51,6 +58,13 @@ exports.getRecipe = (0, https_1.onRequest)(async (request, response) => {
     response.send(recipe);
 });
 exports.postRecipeFromYaml = (0, https_1.onRequest)(async (request, response) => {
+    response.set("Access-Control-Allow-Origin", "*");
+    response.set("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+    response.set("Access-Control-Allow-Headers", "Content-Type");
+    if (request.method === "OPTIONS") {
+        response.status(204).send("");
+        return;
+    }
     const yamlData = request.body;
     const jsonData = yaml.load(yamlData);
     const removeUnusedFields = Object.fromEntries(Object.entries(jsonData).filter(([key]) => !["ogImage", "coverImage"].includes(key)));
@@ -77,6 +91,13 @@ exports.postRecipeFromYaml = (0, https_1.onRequest)(async (request, response) =>
     response.status(200).json(filteredData);
 });
 exports.getRecipeIds = (0, https_1.onRequest)(async (request, response) => {
+    response.set("Access-Control-Allow-Origin", "*");
+    response.set("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+    response.set("Access-Control-Allow-Headers", "Content-Type");
+    if (request.method === "OPTIONS") {
+        response.status(204).send("");
+        return;
+    }
     const recipes = db.collection("recipes").get();
     const titles = [];
     (await recipes).forEach((doc) => {
@@ -85,6 +106,13 @@ exports.getRecipeIds = (0, https_1.onRequest)(async (request, response) => {
     response.send(titles);
 });
 exports.getRecipes = (0, https_1.onRequest)(async (request, response) => {
+    response.set("Access-Control-Allow-Origin", "*");
+    response.set("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+    response.set("Access-Control-Allow-Headers", "Content-Type");
+    if (request.method === "OPTIONS") {
+        response.status(204).send("");
+        return;
+    }
     const recipes = db.collection("recipes").get();
     const docs = [];
     (await recipes).forEach((doc) => {
@@ -108,6 +136,13 @@ exports.getRecipes = (0, https_1.onRequest)(async (request, response) => {
     response.send(docs);
 });
 exports.addRecipeTags = (0, https_1.onRequest)(async (request, response) => {
+    response.set("Access-Control-Allow-Origin", "*");
+    response.set("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+    response.set("Access-Control-Allow-Headers", "Content-Type");
+    if (request.method === "OPTIONS") {
+        response.status(204).send("");
+        return;
+    }
     const pathSegments = request.path.split("/");
     const recipeName = pathSegments[1];
     const recipeRef = db.collection("recipes").doc(recipeName);
