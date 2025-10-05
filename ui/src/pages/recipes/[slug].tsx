@@ -222,6 +222,7 @@ export async function getStaticPaths() {
     "miso-fish",
     "miso-fried-prawns",
     "miso-honey-tofu",
+    "miso-mac-and-cheese",
     "miso-soup-dumplings",
     "miso-yoghurt-pasta",
     "mixed-berry-jam",
