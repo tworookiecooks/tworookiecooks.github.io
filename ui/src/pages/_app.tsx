@@ -80,6 +80,12 @@ export default function App({ Component, pageProps }: AppProps) {
           });
         `}
       </Script>
+      <Script
+        async
+        src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7549175737705771"
+        crossOrigin="anonymous"
+        strategy="afterInteractive"
+      />
       <RecipesProvider initialRecipes={pageProps.recipes}>
         <Component {...pageProps} />
       </RecipesProvider>
