@@ -147,3 +147,26 @@ export const addRecipeTags = onRequest(async (request, response) => {
   });
   response.sendStatus(200);
 });
+
+export const patchRecipeTags = onRequest(async (request, response) => {
+  response.set("Access-Control-Allow-Origin", "*");
+  response.set("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+  response.set("Access-Control-Allow-Headers", "Content-Type");
+  if (request.method === "OPTIONS") {
+    response.status(204).send("");
+    return;
+  }
+  const pathSegments = request.path.split("/");
+  const recipeName = pathSegments[1];
+  const recipeRef = db.collection("recipes").doc(recipeName);
+  const doc = await recipeRef.get();
+  let existingTags: string[] = [];
+  if (doc.exists && Array.isArray(doc.data()?.tags)) {
+    existingTags = doc.data()?.tags;
+  }
+  const newTags: string[] = request.body.tags || [];
+  // Add new tags, avoiding duplicates
+  const updatedTags = Array.from(new Set([...(existingTags || []), ...newTags]));
+  await recipeRef.update({ tags: updatedTags });
+  response.sendStatus(200);
+});

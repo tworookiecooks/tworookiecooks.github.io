@@ -23,7 +23,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.addRecipeTags = exports.getRecipes = exports.getRecipeIds = exports.postRecipeFromYaml = exports.getRecipe = void 0;
+exports.patchRecipeTags = exports.addRecipeTags = exports.getRecipes = exports.getRecipeIds = exports.postRecipeFromYaml = exports.getRecipe = void 0;
 const https_1 = require("firebase-functions/v2/https");
 const app_1 = require("firebase-admin/app");
 const firestore_1 = require("firebase-admin/firestore");
@@ -149,6 +149,28 @@ exports.addRecipeTags = (0, https_1.onRequest)(async (request, response) => {
     recipeRef.update({
         tags: request.body.tags,
     });
+    response.sendStatus(200);
+});
+exports.patchRecipeTags = (0, https_1.onRequest)(async (request, response) => {
+    response.set("Access-Control-Allow-Origin", "*");
+    response.set("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+    response.set("Access-Control-Allow-Headers", "Content-Type");
+    if (request.method === "OPTIONS") {
+        response.status(204).send("");
+        return;
+    }
+    const pathSegments = request.path.split("/");
+    const recipeName = pathSegments[1];
+    const recipeRef = db.collection("recipes").doc(recipeName);
+    const doc = await recipeRef.get();
+    let existingTags = [];
+    if (doc.exists && Array.isArray(doc.data()?.tags)) {
+        existingTags = doc.data()?.tags;
+    }
+    const newTags = request.body.tags || [];
+    // Add new tags, avoiding duplicates
+    const updatedTags = Array.from(new Set([...(existingTags || []), ...newTags]));
+    await recipeRef.update({ tags: updatedTags });
     response.sendStatus(200);
 });
 //# sourceMappingURL=index.js.map

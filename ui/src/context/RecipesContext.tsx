@@ -15,11 +15,27 @@ export const RecipesProvider = ({ children, initialRecipes }: { children: ReactN
   useEffect(() => {
     if (initialRecipes && initialRecipes.length > 0) {
       setRecipes(initialRecipes);
+      // Notify analytics that page content is ready so it can send a pending page view
+      try {
+        if (typeof window !== 'undefined' && window.__sendPendingGtag) {
+          window.__sendPendingGtag();
+        }
+      } catch (e) {
+        // ignore
+      }
     } else {
       // Fetch from API if no initialRecipes
       axios.get("https://us-central1-two-rookie-cooks.cloudfunctions.net/getRecipes")
         .then((res) => {
           setRecipes(res.data);
+          // Notify analytics page is ready
+          try {
+            if (typeof window !== 'undefined' && window.__sendPendingGtag) {
+              window.__sendPendingGtag();
+            }
+          } catch (e) {
+            // ignore
+          }
         })
         .catch((err) => {
           console.error("Failed to fetch recipes:", err);
